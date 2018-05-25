@@ -6,7 +6,7 @@ if(-not $projectRoot) {
 	$projectRoot = $PSScriptRoot
 }
 
-$sut = "$projectRoot\$ModuleName"
+#$sut = "$projectRoot\$ModuleName"
 $tests = "$projectRoot\Tests"
 
 $ReleaseDirectory = join-path $projectRoot 'Release'
@@ -30,7 +30,7 @@ task Init {
 }
 
 # Synopsis: PSScriptAnalyzer 
-task Analyze -inputs { gci -Path "$projectRoot\$ModuleName\" -Recurse | Where-Object { -not $_.PSIsContainer } } -outputs $PSScriptResultsFile   Build,{
+task Analyze -inputs { Get-ChildItem -Path "$projectRoot\$ModuleName\" -Recurse | Where-Object { -not $_.PSIsContainer } } -outputs $PSScriptResultsFile   Build,{
     # Modify PSModulePath of the current PowerShell session.
     # We want to make sure we always test the development version of the resource
     # in the current build directory.
@@ -61,7 +61,7 @@ task Analyze -inputs { gci -Path "$projectRoot\$ModuleName\" -Recurse | Where-Ob
 }
 
 # Synopsis: Pester Tests
-Task Pester -inputs { gci -Path "$projectRoot\$ModuleName\","$projectRoot\Tests\" -Recurse | Where-Object { -not $_.PSisContainer } } -outputs $PesterResultsFile Build, {
+Task Pester -inputs { Get-ChildItem -Path "$projectRoot\$ModuleName\","$projectRoot\Tests\" -Recurse | Where-Object { -not $_.PSisContainer } } -outputs $PesterResultsFile Build, {
     if(-not $ENV:BuildProjectPath) {
         Set-BuildEnvironment -Path $PSScriptRoot\..
     }
@@ -93,9 +93,9 @@ $mergePSM1Parameters = @{
 task mergePSM1 @mergePSM1Parameters {
     
     $ReleaseDirectory = join-path $projectRoot 'Release'
-    #if (Test-Path $ReleaseDirectory) {
-    #    remove-item -Recurse -Force -Path $ReleaseDirectory
-    #}
+    if (Test-Path $ReleaseDirectory) {
+        remove-item -Recurse -Force -Path $ReleaseDirectory
+    }
 
     #Create Release Folder
     New-Item -Path $ReleaseDirectory -ItemType Directory -Force | Out-Null
@@ -133,7 +133,7 @@ $buildMamlParams = @{
 
 # Synopsis: Generate MAML Help File
 Task GenerateHelp @buildMamlParams  {
-    $Results = New-ExternalHelp .\docs\ -OutputPath .\Release\en-us\ -Force
+    New-ExternalHelp .\docs\ -OutputPath .\Release\en-us\ -Force | Out-Null
 }
 
 # Synopsis: Remove the Release directory
@@ -180,6 +180,6 @@ task Deploy build,pester,analyze,psdeploy
 
 # Synopsis: Clean all of the artifacts from the build process
 task Clean {
-    Remove-Item "$ReleaseDirectory" -Recurse
-    Remove-Item "$ResultsDirectory" -Recurse
+    Remove-Item "$ReleaseDirectory" -Recurse -ErrorAction SilentlyContinue
+    Remove-Item "$ResultsDirectory" -Recurse -ErrorAction SilentlyContinue
 }

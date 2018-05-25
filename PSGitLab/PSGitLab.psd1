@@ -12,7 +12,7 @@
 RootModule = 'PSGitLab.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.5.4'
+ModuleVersion = '2.7.0'
 
 # ID used to uniquely identify this module
 GUID = 'f844db87-fda8-403b-a7da-bdc00a3f5a58'
@@ -24,7 +24,7 @@ Author = 'Nicholas M. Getchell, Leonhard Schick, and Brooks Collins'
 # CompanyName = 'Unknown'
 
 # Copyright statement for this module
-Copyright = '(c) 2016 PSGitLab. All rights reserved.'
+Copyright = '(c) 2018 PSGitLab. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'GitLab API accessable from the Windows PowerShell console'
@@ -73,12 +73,19 @@ FunctionsToExport = @(
     'Remove-GitLabUser',
     'New-GitLabUser',
     "Get-GitLabUserKey",
+    "Get-GitLabPipeline",
+    "Restart-GitLabPipeline"
+    "Start-GitLabPipeline",
+    "Stop-GitLabPipeline",
     'Get-GitLabProject',
     'Get-GitLabProjectEvent',
     'Get-GitLabProjectWebhook',
     'Get-GitlabProjectServiceSlack',
     'Set-GitlabProjectServiceSlack',
     'Remove-GitlabProjectServiceSlack',
+    'Get-GitlabProjectServiceMSTeams',
+    'Set-GitlabProjectServiceMSTeams',
+    'Remove-GitlabProjectServiceMSTeams',
     'Get-GitLabProjectTag',
     'Get-GitLabProjectCommit',
     'New-GitLabFork',
@@ -107,7 +114,18 @@ FunctionsToExport = @(
     'New-GitLabUserKey',
     'Remove-GitLabUserKey',
     'Push-SSHKeysToGitLab',
-    'Get-GitlabGroup'
+    'Get-GitlabGroup',
+    'Get-GitLabProjectSubmodule',
+    'Get-GitLabProjectArchive',
+    'Get-GitLabProjectRepositoryTree',
+    'Get-GitLabSetting',
+    'Get-GitLabVersion',
+    'Add-GitLabProjectRunner',
+    'Get-GitLabRunner',
+    'New-GitLabRunner',
+    'Remove-GitLabProjectRunner',
+    'Remove-GitLabRunner',
+    'Set-GitLabRunner'
     )
 
 # Cmdlets to export from this module
@@ -140,7 +158,9 @@ PrivateData = @{
                  'CI'
                  'ContinuousIntegration',
                  'Builds',
-                 'Repository'
+                 'Repository',
+                 'PSEdition_Core',
+                 'PSEdition_Desktop'
         )
 
         # A URL to the license for this module.
