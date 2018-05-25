@@ -15,7 +15,7 @@
     } elseif ( $isLinux  -or $IsMacOS ) {
         $Token = $GitLabConfig.Token
     }
-    
+
     $Result = Invoke-WebRequest -UseBasicParsing -Uri "$Domain/api/$Version/projects?private_token=$Token"
     Remove-Variable Token
     GetGitLabStatusCode $Result.StatusCode

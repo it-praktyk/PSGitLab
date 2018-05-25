@@ -11,17 +11,29 @@ Get-Command -Module $ModuleName | Where-Object { $_.CommandType -ne 'Alias' } | 
             It 'Synopsis not empty' {
                 Get-Help $_ | Select-Object -ExpandProperty synopsis | should not benullorempty
             }
-            It "Synopsis should not be auto-generated" {
+            It "Synopsis should not be auto-generated" -Skip:$( $isLinux ){
                 Get-Help $_ | Select-Object -ExpandProperty synopsis | Should Not BeLike '*`[`<CommonParameters`>`]*'
             }
 
-            It 'Description not empty' {
+            It 'Description not empty' -Skip:$( $isLinux ) {
                 Get-Help $_ | Select-Object -ExpandProperty Description | should not benullorempty
             }
-            It 'Examples Count greater than 0' {
+            It 'Examples Count greater than 0' -Skip:$( $isLinux ) {
 
                 $Examples = Get-Help $_ | Select-Object -ExpandProperty Examples | Measure-Object
                 $Examples.Count -gt 0 | Should be $true
+            }
+        }
+
+        Context "PlatyPS Default Help" {
+            It "Synopsis should not be auto-generated - Platyps default"  {
+                Get-Help $_ | Select-Object -ExpandProperty synopsis | Should Not BeLike '*{{Fill in the Synopsis}}*'
+            }
+            It "Description should not be auto-generated - Platyps default" {
+                Get-Help $_ | Select-Object -ExpandProperty Description | Should Not BeLike '*{{Fill in the Description}}*'
+            }
+            It "Example should not be auto-generated - Platyps default" {
+                Get-Help $_ | Select-Object -ExpandProperty Examples | Should Not BeLike '*{{ Add example code here }}*'
             }
         }
 
@@ -33,7 +45,7 @@ Get-Command -Module $ModuleName | Where-Object { $_.CommandType -ne 'Alias' } | 
                 foreach ($Parameter in $Parameters.Name) {
                     $ParameterHelp = $Parameters | Where-Object { $_.name -eq $Parameter }
 
-                    It "Parameter Help for $Parameter" {
+                    It "Parameter Help for $Parameter" -Skip:$( $isLinux ) {
                         $ParameterHelp.description.text | Should not benullorempty
                     }
                 }
