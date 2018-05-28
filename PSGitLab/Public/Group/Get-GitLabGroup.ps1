@@ -2,14 +2,11 @@ Function Get-GitLabGroup {
     [cmdletbinding(DefaultParameterSetName='All')]
     [OutputType('GitLab.Group')]
     param(
-        [Parameter(ParameterSetName='ID')]
+        [Parameter(Mandatory=$false,ParameterSetName='ID')]
         $GroupID,
 
-        [Parameter(ParameterSetName='Search')]
-        $Search,
-
-        [Parameter(ParameterSetName='All')]
-        [switch]$All
+        [Parameter(Mandatory=$false,ParameterSetName='Search')]
+        $Search
     )
 
     $Request = @{

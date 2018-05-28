@@ -14,12 +14,12 @@ Function GetAccessLevel {
         Reporter { return 20; break; }
         Developer { return 30; break; }
         Master { return 40; break; }
-        Owner { 
+        Owner {
             if ( $Type -eq 'Group' ) {
                 return 50; break;
             }
             else {
-                Write-Error 'Projects do not have owner permission set. See https://docs.gitlab.com/ce/api/members.html' 
+                Write-Error 'Projects do not have owner permission set. See https://docs.gitlab.com/ce/api/members.html'
             }
         }
     }

@@ -8,14 +8,14 @@ Import-Module $ModuleManifest
 InModuleScope $ModuleName -ScriptBlock {
 
     Describe 'Get-GitLabGroup' {
-        
+
         Context 'Request' {
             Mock -CommandName QueryGitLabAPI -MockWith {
                 $Request
-            }   
+            }
 
             It 'Get All Groups' {
-                $Result = Get-GitlabGroup 
+                $Result = Get-GitlabGroup
                 $Result.URI | Should be '/groups'
                 $Result.Method | Should be 'GET'
             }

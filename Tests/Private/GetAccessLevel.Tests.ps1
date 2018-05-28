@@ -60,7 +60,7 @@ InModuleScope -ModuleName $ModuleName {
                 { GetAccessLevel -Level Owner -Type $Type -ErrorAction Stop } | Should throw 'Projects do not have owner permission set. See https://docs.gitlab.com/ce/api/members.html'
             }
 
-        }    
+        }
 
     }
 }
