@@ -3,10 +3,12 @@ Function Get-GitLabGroup {
     [OutputType('GitLab.Group')]
     param(
         [Parameter(Mandatory=$false,ParameterSetName='ID')]
+        [Alias('Id')]
         $GroupID,
 
         [Parameter(Mandatory=$false,ParameterSetName='Search')]
-        $Search
+        [ValidateScript({ ValidateMinimumLength -StringToValidate $_ })]
+        [String]$Search
     )
 
     $Request = @{
@@ -14,12 +16,11 @@ Function Get-GitLabGroup {
         Method = 'GET'
     }
 
-    if ( $PSBoundParameters.ContainsKey('GroupID') ) {
-        $Request.URI = '/groups/{0}' -f $GroupID
-    }
-
-    if ( $PSBoundParameters.ContainsKey('Search') ) {
-        $Request.URI = '/groups?search={0}' -f $Search
+    switch ($PSCmdlet.ParameterSetName) {
+        All { $Request.URI = '/groups'; break; }
+        ID { $Request.URI = "/groups/$GroupID"; break; }
+        Search { $Request.URI = "/groups?search=$Search"; break; }
+        default { Write-Error "Incorrect parameter set."; break; }
     }
 
     QueryGitLabAPI -Request $Request -ObjectType 'GitLab.Group'

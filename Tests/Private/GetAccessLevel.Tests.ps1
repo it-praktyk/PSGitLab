@@ -6,58 +6,44 @@ Get-Module $ModuleName | Remove-Module
 Import-Module $ModuleManifest
 
 InModuleScope -ModuleName $ModuleName {
-    Describe 'GetAccessLevel' {
+    Describe 'GetAccessLevel - by LevelName' {
 
-        Context 'Group Permissions' {
-            $Type = 'Group'
+        Context 'Group Permissions - by LevelName' {
+            $Types = @('Group','Project')
 
-            It 'Guest' {
-                GetAccessLevel -Level Guest -Type $Type | Should be 10
-            }
+            $LevelNames = @{'Guest' = 10;
+                            'Reporter' = 20;
+                            'Developer' = 30;
+                            'Master' = 40;
+                            'Owner' = 50}
 
-            It 'Reporter' {
-                GetAccessLevel -Level Reporter -Type $Type | Should be 20
-            }
+            ForEach ( $Type in $Types ) {
 
-            It 'Developer' {
-                GetAccessLevel -Level Developer -Type $Type | Should be 30
-            }
+                ForEach ( $LevelName in $LevelName.Keys ) {
 
-            It 'Master' {
-                GetAccessLevel -Level Master -Type $Type | Should be 40
-            }
+                    It '$LevelName - $Type' {
+                        GetAccessLevel -LevelName $LevelName -Type $Type | Should be $LevelNames[$LevelName]
+                    }
 
-            It 'Owner' {
-                GetAccessLevel -Level Owner -Type $Type | Should be 50
-            }
+                    if ( $LevelName -eq 'Owner' ) {
 
-            It 'Owner do not throw' {
-                { GetAccessLevel -Level Owner -Type 'Group' -ErrorAction Stop } | Should not throw
-            }
+                        if ( $Type -eq 'Group' ) {
+                            It 'Owner' {
+                                GetAccessLevel -LevelName Owner -Type $Type | Should be 50
+                            }
 
-        }
+                            It 'Owner do not throw' {
+                                { GetAccessLevel -LevelName Owner -Type 'Group' -ErrorAction Stop } | Should not throw
+                            }
+                        }
+                        else {
+                            It 'Owner' {
+                                { GetAccessLevel -LevelName Owner -Type $Type -ErrorAction Stop } | Should throw 'Projects do not have owner permission set. See https://docs.gitlab.com/ce/api/members.html'
+                            }
+                        }
+                    }
+                }
 
-        Context 'Project Permissions' {
-            $Type = 'Project'
-
-            It 'Guest' {
-                GetAccessLevel -Level Guest -Type $Type | Should be 10
-            }
-
-            It 'Reporter' {
-                GetAccessLevel -Level Reporter -Type $Type | Should be 20
-            }
-
-            It 'Developer' {
-                GetAccessLevel -Level Developer -Type $Type | Should be 30
-            }
-
-            It 'Master' {
-                GetAccessLevel -Level Master -Type $Type | Should be 40
-            }
-
-            It 'Owner' {
-                { GetAccessLevel -Level Owner -Type $Type -ErrorAction Stop } | Should throw 'Projects do not have owner permission set. See https://docs.gitlab.com/ce/api/members.html'
             }
 
         }

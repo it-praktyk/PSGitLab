@@ -6,14 +6,13 @@ Function Get-GitLabGroupMember {
         [Parameter(Mandatory=$true)]
         [Int]$GroupID,
 
-        [Parameter(ParameterSetName='ID')]
+        [Parameter(ParameterSetName='UserID')]
         [Int]$UserID,
 
         [Parameter(ParameterSetName='Search')]
-        $Search,
+        [ValidateScript({ ValidateMinimumLength -StringToValidate $_ })]
+        $Search
 
-        [Parameter(ParameterSetName='All')]
-        [switch]$All
     )
 
     $Request = @{
@@ -21,14 +20,13 @@ Function Get-GitLabGroupMember {
         Method = 'GET'
     }
 
-    if ( $PSBoundParameters.ContainsKey('GroupID') ) {
-        $Request.URI = '/groups/{0}/members' -f $GroupID
+    switch ($PSCmdlet.ParameterSetName) {
+        All { $Request.URI = "/groups/$GroupID/members"; break; }
+        UserID { $Request.URI = "/groups/$GroupID/members/$UserID"; break; }
+        Search { $Request.URI = "/groups/$GroupID/members?query=$Search"; break; }
+        default { Write-Error "Incorrect parameter set."; break; }
     }
 
-    if ( $PSBoundParameters.ContainsKey('Search') ) {
-        $Request.URI = '/groups/{0}?search={0}' -f $Search
-    }
-
-    QueryGitLabAPI -Request $Request -ObjectType 'GitLab.Group'
+    QueryGitLabAPI -Request $Request -ObjectType 'GitLab.Group.Member'
 
 }

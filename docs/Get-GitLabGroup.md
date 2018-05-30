@@ -29,6 +29,8 @@ Get-GitLabGroup [-Search <Object>]
 ## DESCRIPTION
 Get a list of groups from your GitLab instance. Search parameter allows you to find by name or description.
 
+Only groups visible for
+
 ## EXAMPLES
 
 ### Example 1
@@ -36,7 +38,7 @@ Get a list of groups from your GitLab instance. Search parameter allows you to f
 PS C:\> Get-GitlabGroup -All
 ```
 
-Get a list of all groups in the GitLab instance.
+Get a list of all groups in the GitLab instance for which authenticated user has access.
 
 ### Example 2
 ```
@@ -73,9 +75,9 @@ Accept wildcard characters: False
 Get a certain group.
 
 ```yaml
-Type: Object
+Type: Int32
 Parameter Sets: ID
-Aliases: 
+Aliases:
 
 Required: False
 Position: Named
@@ -85,10 +87,10 @@ Accept wildcard characters: False
 ```
 
 ### -Search
-Find a group by name or description.
+Find a group by name or description. Provided pattern has to be at least 3 characters long.
 
 ```yaml
-Type: Object
+Type: String
 Parameter Sets: Search
 Aliases: 
 
@@ -112,4 +114,4 @@ Accept wildcard characters: False
 ## NOTES
 
 ## RELATED LINKS
-
+[GitLab groups API](https://docs.gitlab.com/ce/api/groups.html)

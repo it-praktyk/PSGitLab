@@ -606,5 +606,31 @@
         </ListEntries>
       </ListControl>
     </View>
+    <View>
+      <Name>PSGitLab</Name>
+      <ViewSelectedBy>
+        <TypeName>GitLab.Group</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem>
+                <Label>GroupId</Label>
+                <ScriptBlock>$_.id</ScriptBlock>
+              </ListItem>
+              <ListItem>
+                <label>Name</label>
+                <ScriptBlock>$_.name</ScriptBlock>
+              </ListItem>
+              <ListItem>
+                <label>FullName</label>
+                <ScriptBlock>$_.full_name</ScriptBlock>
+              </ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
   </ViewDefinitions>  
 </Configuration>
