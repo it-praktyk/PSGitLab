@@ -11,7 +11,6 @@ $tests = "$projectRoot\Tests"
 
 $ReleaseDirectory = join-path $projectRoot 'Release'
 $ResultsDirectory = Join-Path $projectRoot 'Results'
-$PesterResultsStyleRulesFile = Join-Path $ResultsDirectory 'PesterResultsStyleRules.xml'
 $PesterResultsFile = Join-Path $ResultsDirectory 'PesterResults.xml'
 $PSScriptResultsFile = Join-Path $ResultsDirectory 'PSScriptAnalyzer.txt'
 
@@ -28,29 +27,6 @@ task Init {
 
     if ( -not ( test-path -Path $ReleaseDirectory ) ) { New-Item -ItemType Directory -Path $projectRoot -Name Release | Out-Null }
     if ( -not ( test-path -Path $ResultsDirectory ) ) { New-Item -ItemType Directory -Path $projectRoot -Name Results | Out-Null}
-}
-
-# Synopsis: Pester - StyleRules only
-task PesterStyleRules -inputs { Get-ChildItem -Path "$projectRoot\$ModuleName\" -Recurse | Where-Object { -not $_.PSIsContainer } } -outputs $PesterResultsStyleRulesFile {
-
-    if(-not $ENV:BuildProjectPath) {
-        Set-BuildEnvironment -Path $PSScriptRoot\..
-    }
-    Remove-Module $ENV:BuildProjectName -ErrorAction SilentlyContinue
-    Import-Module (Join-Path $ENV:BuildProjectPath $ENV:BuildProjectName) -Force
-
-    $testResults = Invoke-Pester -Path (Join-Path $tests StyleRules.Tests.ps1) -Tag StyleRules -PassThru -OutputFile $PesterResultsStyleRulesFile
-
-    # Upload to AppVeyor
-    if ( $env:BuildBuildSystem -eq 'AppVeyor' ) {
-        (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $PesterResultsStyleRulesFile))
-    }
-
-    if ($testResults.FailedCount -gt 0) {
-        $testResults | Format-List
-        throw 'One or more Pester style rules tests failed. Build cannot continue!'
-    }
-
 }
 
 # Synopsis: PSScriptAnalyzer
@@ -95,7 +71,7 @@ Task Pester -inputs { Get-ChildItem -Path "$projectRoot\$ModuleName\","$projectR
     # AppVeyor NUnitXml Upload
     # Source: https://github.com/pester/Pester/wiki/Showing-Test-Results-in-CI-(TeamCity,-AppVeyor)
 
-    $testResults = Invoke-Pester -Path $tests -ExcludeTag StyleRules -PassThru -OutputFile $PesterResultsFile
+    $testResults = Invoke-Pester -Path $tests -PassThru -OutputFile $PesterResultsFile
 
     # Upload to AppVeyor
     if ( $env:BuildBuildSystem -eq 'AppVeyor' ) {
@@ -171,7 +147,7 @@ Task GenerateHelp @buildMamlParams  {
 task Pre-Commit Build,pester,analyze
 
 # Synopsis: Build Tasks
-task Build init,PesterStyleRules,mergePSM1,GenerateHelp
+task Build init,mergePSM1,GenerateHelp
 
 # Synopsis: Default Task - Alias for Pre-Commit
 task . Pre-Commit
